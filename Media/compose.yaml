@@ -1,0 +1,155 @@
+services:
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      - 8888:8888/tcp
+      - 8388:8388/tcp
+      - 8388:8388/udp
+      - 9080:9080/tcp # Qbit
+      - 9080:9080/udp # Qbit
+      - 9696:9696/tcp # Prowlarr
+      - 9696:9696/udp # Prowlarr
+    volumes:
+      - gluetun-data:/gluetun
+    environment:
+      - VPN_SERVICE_PROVIDER=${VPN_PROVIDER}
+      - OPENVPN_USER=${VPN_USER}
+      - OPENVPN_PASSWORD=${VPN_PASS}
+      - SERVER_REGIONS=${VPN_REGIONS}
+      - TZ=${CONTAINER_TZ}
+      - UPDATER_PERIOD=24h
+      - VPN_PORT_FORWARDING=off
+      - PORT_FORWARD_ONLY=false
+      - FIREWALL_OUTBOUND_SUBNETS=${VPN_OUTBOUND_SUBNET}
+    restart: unless-stopped
+
+  folders-init:
+    image: alpine
+    restart: "no"
+    entrypoint: '/bin/sh -c "chown 1000:1000 /data/*"'
+    volumes:
+      - downloads:/data/downloads
+      - tv:/data/tv
+      - movies:/data/movie
+
+  qbittorrent:
+    image: ghcr.io/hotio/qbittorrent
+    container_name: qbittorrent
+    network_mode: "service:gluetun"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=${CONTAINER_TZ}
+      - WEBUI_PORTS=9080/tcp,9080/udp
+    restart: unless-stopped
+    volumes:
+      - qbit-config:/config
+      - downloads:/data/downloads
+    depends_on:
+      folders-init:
+        condition: service_completed_successfully
+    
+  prowlarr:
+    image: ghcr.io/hotio/prowlarr
+    container_name: prowlarr
+    network_mode: "service:gluetun"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=${CONTAINER_TZ}
+    restart: unless-stopped
+    volumes:
+      - prowlarr-config:/config
+
+  sonarr:
+    container_name: sonarr
+    image: ghcr.io/hotio/sonarr
+    ports:
+      - "8989:8989"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=${CONTAINER_TZ}
+    restart: unless-stopped
+    volumes:
+      - sonarr-config:/config
+      - downloads:/data/downloads
+      - tv:/data/tv
+      - movies:/data/movies
+    depends_on:
+      folders-init:
+        condition: service_completed_successfully
+  
+  radarr:
+    container_name: radarr
+    image: ghcr.io/hotio/radarr
+    ports:
+      - "7878:7878"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=${CONTAINER_TZ}
+    restart: unless-stopped
+    volumes:
+      - radarr-config:/config
+      - downloads:/data/downloads
+      - tv:/data/tv
+      - movies:/data/movies
+    depends_on:
+      folders-init:
+        condition: service_completed_successfully
+  
+  overseerr:
+    container_name: overseerr
+    image: ghcr.io/hotio/overseerr
+    ports:
+      - "5055:5055"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=${CONTAINER_TZ}
+    restart: unless-stopped
+    volumes:
+      - overseerr-config:/config
+  
+  flaresolverr:
+    container_name: flaresolverr
+    image: ghcr.io/flaresolverr/flaresolverr
+    ports:
+      - "8191:8191"
+    environment:
+      - LOG_LEVEL=info
+      - LOG_HTML=false
+      - CAPTCHA_SOLVER=none
+      - TZ=${CONTAINER_TZ}
+    restart: unless-stopped
+
+volumes:
+  gluetun-data:
+    driver: local
+  qbit-config:
+    driver: local
+  prowlarr-config:
+    driver: local
+  sonarr-config:
+    driver: local
+  radarr-config:
+    driver: local
+  overseerr-config:
+    driver: local
+  downloads:
+    driver: local
+  tv:
+    driver: local
+  movies:
+    driver: local
