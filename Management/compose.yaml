@@ -8,6 +8,12 @@ services:
       - portainer-data:/data
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - "traefik.enable=${ TRAEFIK_PORTAINER }"
+      - "traefik.http.routers.portainer.rule=Host(`portainer.${SERVER_DOMAIN}`)"
+      - "traefik.http.routers.portainer.entrypoints=https"
+      - "traefik.http.routers.portainer.tls=true"
+      - "traefik.http.services.portainer.loadbalancer.server.port=9000"
     restart: unless-stopped
 
   watchtower:
@@ -22,6 +28,14 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
+
+  acme-init:
+    container_name: folders-init
+    image: alpine
+    restart: "no"
+    entrypoint: '/bin/sh -c "install -m 0600 /dev/null /data/acme.json"'
+    volumes:
+      - ./data:/data
 
   traefik:
     image: traefik:v3.0
@@ -60,6 +74,9 @@ services:
       - "traefik.http.routers.traefik-secure.tls.domains[0].main=${SERVER_DOMAIN}"
       - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.${SERVER_DOMAIN}"
       - "traefik.http.routers.traefik-secure.service=api@internal"
+    depends_on:
+      acme-init:
+        condition: service_completed_successfully
 
 volumes:
   portainer-data:
