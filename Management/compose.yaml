@@ -16,7 +16,7 @@ services:
     environment:
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_REMOVE_VOLUMES=true
-      - WATCHTOWER_SCHEDULE="0 0 4 * * *"
+      - WATCHTOWER_SCHEDULE=0 0 4 * * *
       - WATCHTOWER_ROLLING_RESTART=true
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -37,11 +37,12 @@ services:
     environment:
       CF_DNS_API_TOKEN: ${CF_DNS_API_TOKEN}
       TRAEFIK_DASHBOARD_CREDENTIALS: ${TRAEFIK_DASHBOARD_CREDENTIALS}
-    env_file: Server.env
+    env_file: Management.env
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./data/traefik.yml:/traefik.yml:ro
+      - ./data/config.yml:/config.yml:ro
       - ./data/acme.json:/acme.json
     labels:
       - "traefik.enable=true"
