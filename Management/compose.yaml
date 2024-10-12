@@ -32,7 +32,7 @@ services:
     restart: unless-stopped
 
   acme-init:
-    container_name: folders-init
+    container_name: acme-init
     image: alpine
     restart: "no"
     entrypoint: '/bin/sh -c "install -m 0600 /dev/null /data/acme.json"'
