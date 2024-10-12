@@ -16,7 +16,8 @@ services:
     networks:
       - proxy
     environment:
-      - NTFY_BASE_URL=http://ntfy.${SERVER_DOMAIN}
+      - NTFY_BASE_URL=https://ntfy.${SERVER_DOMAIN}
+      - NTFY_WEB_ROOT=${WEB_ROOT}
       - TZ=${CONTAINER_TZ}
       - NTFY_CACHE_FILE=/var/cache/ntfy/cache.db
       - NTFY_ATTACHMENT_CACHE_DIR=/var/cache/ntfy/attachments
