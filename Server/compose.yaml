@@ -27,6 +27,10 @@ services:
       - NTFY_ENABLE_LOGIN=true
       - NTFY_UPSTREAM_BASE_URL=https://ntfy.sh
       - NTFY_CACHE_DURATION=0
+      - NTFY_WEB_PUSH_FILE=/etc/ntfy/webpush.db
+      - NTFY_WEB_PUSH_PUBLIC_KEY=${WEB_PUSH_PUBLIC_KEY}
+      - NTFY_WEB_PUSH_PRIVATE_KEY=${WEB_PUSH_PRIVATE_KEY}
+      - NTFY_WEB_PUSH_EMAIL_ADDRESS=${WEB_PUSH_EMAIL_ADDRESS}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.ntfy.rule=Host(`ntfy.${SERVER_DOMAIN}`)"
