@@ -1,7 +1,7 @@
 services:
   portainer:
     container_name: portainer
-    image: portainer/portainer-ce
+    image: portainer/portainer-ce:latest
     ports:
       - 9443:9443
     volumes:
@@ -20,7 +20,7 @@ services:
 
   watchtower:
     container_name: watchtower
-    image: containrrr/watchtower
+    image: containrrr/watchtower:latest
     environment:
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_REMOVE_VOLUMES=true
@@ -33,14 +33,14 @@ services:
 
   acme-init:
     container_name: acme-init
-    image: alpine
+    image: alpine:latest
     restart: "no"
     entrypoint: '/bin/sh -c "install -m 0600 /dev/null /data/acme.json"'
     volumes:
       - ./data:/data
 
   traefik:
-    image: traefik:v3.0
+    image: traefik:latest
     container_name: traefik
     restart: unless-stopped
     security_opt:

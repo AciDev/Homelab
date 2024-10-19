@@ -1,7 +1,7 @@
 services:
   folders-init:
     container_name: folders-init
-    image: alpine
+    image: alpine:latest
     restart: "no"
     entrypoint: '/bin/sh -c "chown 1000:1000 /data/*"'
     volumes:
@@ -10,7 +10,7 @@ services:
 
   ntfy:
     container_name: ntfy
-    image: binwiederhier/ntfy
+    image: binwiederhier/ntfy:latest
     command:
       - serve
     networks:
