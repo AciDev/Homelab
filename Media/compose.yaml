@@ -133,6 +133,70 @@ services:
       - CAPTCHA_SOLVER=none
       - TZ=${CONTAINER_TZ}
     restart: unless-stopped
+  
+  plex:
+    container_name: plex
+    image: ghcr.io/hotio/plex
+    ports:
+      - "32400:32400"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=${CONTAINER_TZ}
+      - PLEX_CLAIM_TOKEN=${PLEX_CLAIM_TOKEN}
+      - PLEX_BETA_INSTALL=false
+      - PLEX_PURGE_CODECS=false
+    volumes:
+      - plex-config:/config
+      - plex-transcode:/transcode
+      - tv:/data/tv
+      - movies:/data/movies
+    depends_on:
+      folders-init:
+        condition: service_completed_successfully
+  
+  tautulli:
+    container_name: tautulli
+    image: ghcr.io/hotio/tautulli
+    ports:
+      - "8181:8181"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=${CONTAINER_TZ}
+      - WEBUI_PORTS=8181/tcp,8181/udp
+    volumes:
+      - tautulli-config:/config
+  
+  jellyseerr:
+    container_name: jellyseerr
+    image: ghcr.io/hotio/jellyseerr
+    ports:
+      - "5056:5055"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=${CONTAINER_TZ}
+    volumes:
+      - jellyseerr-config:/config
+  
+  jellyfin:
+    container_name: jellyfin
+    image: ghcr.io/hotio/jellyfin
+    ports:
+      - "8096:8096"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=${CONTAINER_TZ}
+    volumes:
+      - jellyfin-config:/config
+      - tv:/data/tv
+      - movies:/data/movies
 
 volumes:
   gluetun-data:
@@ -146,6 +210,16 @@ volumes:
   radarr-config:
     driver: local
   overseerr-config:
+    driver: local
+  plex-transcode:
+    driver: local
+  plex-config:
+    driver: local
+  tautulli-config:
+    driver: local
+  jellyseerr-config:
+    driver: local
+  jellyfin-config:
     driver: local
   downloads:
     driver: local
