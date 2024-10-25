@@ -46,24 +46,9 @@ services:
     depends_on:
       ntfy-folders-init:
         condition: service_completed_successfully
-  
-  n8n-notify:
-    container_name: n8n-notify
-    image: docker.n8n.io/n8nio/n8n
-    restart: always
-    environment:
-      - N8N_SECURE_COOKIE=false
-      - N8N_DEFAULT_LOCALE=${N8N_LOCALE}
-      - GENERIC_TIMEZONE=${CONTAINER_TZ}
-    ports:
-      - 5678:5678
-    volumes:
-      - n8n-notify-storage:/home/node/.n8n
 
 volumes:
   ntfy-data:
     driver: local
   ntfy-cache:
-    driver: local
-  n8n-notify-storage:
     driver: local
