@@ -43,9 +43,6 @@ services:
         source: ./../Docker-data/Server/Ntfy/data
         target: /etc/ntfy
     restart: unless-stopped
-    depends_on:
-      folders-init:
-        condition: service_completed_successfully
 
 networks:
   proxy:
