@@ -2,3 +2,4 @@
 traefik.yml
 config.yml
 acme.json
+Docker-data/*

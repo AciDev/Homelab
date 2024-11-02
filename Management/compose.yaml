@@ -5,9 +5,16 @@ services:
     ports:
       - 9443:9443
     volumes:
-      - portainer-data:/data
-      - /etc/localtime:/etc/localtime:ro
-      - /var/run/docker.sock:/var/run/docker.sock
+      - type: bind
+        source: /etc/localtime
+        target: /etc/localtime
+        read_only: true
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: bind
+        source: ./../Docker-data/Management/Portainer/data
+        target: /data
     networks:
       - proxy
     labels:
@@ -33,17 +40,14 @@ services:
       - WATCHTOWER_SCHEDULE=0 0 4 * * *
       - WATCHTOWER_ROLLING_RESTART=true
     volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /var/run/docker.sock:/var/run/docker.sock
+      - type: bind
+        source: /etc/localtime
+        target: /etc/localtime
+        read_only: true
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
     restart: unless-stopped
-
-  acme-init:
-    container_name: acme-init
-    image: alpine:latest
-    restart: "no"
-    entrypoint: '/bin/sh -c "install -m 0600 /dev/null /data/acme.json"'
-    volumes:
-      - ./data:/data
 
   traefik:
     image: traefik:latest
@@ -57,15 +61,28 @@ services:
       - 80:80
       - 443:443
     environment:
-      CF_DNS_API_TOKEN: ${CF_DNS_API_TOKEN}
-      TRAEFIK_DASHBOARD_CREDENTIALS: ${TRAEFIK_DASHBOARD_CREDENTIALS}
-    env_file: Management.env
+      - CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN}
+      - TRAEFIK_DASHBOARD_CREDENTIALS=${TRAEFIK_DASHBOARD_CREDENTIALS}
     volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./data/traefik.yml:/traefik.yml:ro
-      - ./data/config.yml:/config.yml:ro
-      - ./data/acme.json:/acme.json
+      - type: bind
+        source: /etc/localtime
+        target: /etc/localtime
+        read_only: true
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+      - type: bind
+        source: ./../Docker-data/Management/Traefik/data/traefik.yml
+        target: /traefik.yml
+        read_only: true
+      - type: bind
+        source: ./../Docker-data/Management/Traefik/data/config/config.yml
+        target: /config.yml
+        read_only: true
+      - type: bind
+        source: ./../Docker-data/Management/Traefik/data/acme.json
+        target: /acme.json
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.entrypoints=http"
@@ -82,13 +99,6 @@ services:
       - "traefik.http.routers.traefik-secure.tls.domains[0].main=${SERVER_DOMAIN}"
       - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.${SERVER_DOMAIN}"
       - "traefik.http.routers.traefik-secure.service=api@internal"
-    depends_on:
-      acme-init:
-        condition: service_completed_successfully
-
-volumes:
-  portainer-data:
-    driver: local
 
 networks:
   proxy:

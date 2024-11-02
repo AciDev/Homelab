@@ -1,13 +1,4 @@
 services:
-  folders-init:
-    container_name: folders-init
-    image: alpine:latest
-    restart: "no"
-    entrypoint: '/bin/sh -c "chown 1000:1000 /data/*"'
-    volumes:
-      - ntfy-cache:/data/ntfy-cache
-      - ntfy-data:/data/ntfy
-
   ntfy:
     container_name: ntfy
     image: binwiederhier/ntfy:latest
@@ -33,25 +24,28 @@ services:
       - NTFY_WEB_PUSH_EMAIL_ADDRESS=${WEB_PUSH_EMAIL_ADDRESS}
     labels:
       - "traefik.enable=true"
+      - "traefik.http.routers.ntfy.entrypoints=http"
       - "traefik.http.routers.ntfy.rule=Host(`ntfy.${SERVER_DOMAIN}`)"
-      - "traefik.http.routers.ntfy.entrypoints=https"
-      - "traefik.http.routers.ntfy.tls=true"
+      - "traefik.http.middlewares.ntfy-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.ntfy.middlewares=ntfy-https-redirect"
+      - "traefik.http.routers.ntfy-secure.entrypoints=https"
+      - "traefik.http.routers.ntfy-secure.rule=Host(`ntfy.${SERVER_DOMAIN}`)"
+      - "traefik.http.routers.ntfy-secure.tls=true"
+      - "traefik.http.routers.ntfy-secure.service=ntfy"
       - "traefik.http.services.ntfy.loadbalancer.server.port=80"
+      - "traefik.docker.network=proxy"
     user: 1000:1000
-    env_file: Server.env
     volumes:
-      - ntfy-cache:/var/cache/ntfy
-      - ntfy-data:/etc/ntfy
+      - type: bind
+        source: ./../Docker-data/Server/Ntfy/cache
+        target: /var/cache/ntfy
+      - type: bind
+        source: ./../Docker-data/Server/Ntfy/data
+        target: /etc/ntfy
     restart: unless-stopped
     depends_on:
       folders-init:
         condition: service_completed_successfully
-  
-volumes:
-  ntfy-data:
-    driver: local
-  ntfy-cache:
-    driver: local
 
 networks:
   proxy:
