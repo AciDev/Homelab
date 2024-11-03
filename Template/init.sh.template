@@ -19,6 +19,18 @@ directory () {
     fi
 }
 
+own () {
+    directory "$1"
+    local directory_path="$folder_loc/$1"
+    local user="$(stat -c %u "$directory_path")"
+    local group="$(stat -c %g "$directory_path")"
+    if [ "$user" -ne 1000 ] || [ "$group" -ne 1000 ]; then
+        echo "Chowning 1000:1000 $1"
+        chown 1000:1000 "$directory_path"
+        changed=true
+    fi
+}
+
 # Code goes here
 
 echo "Complete"

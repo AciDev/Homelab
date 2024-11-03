@@ -1,0 +1,58 @@
+services:
+  chromium:
+    image: lscr.io/linuxserver/chromium:latest
+    container_name: chromium
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+      - CHROME_CLI=https://www.linuxserver.io/
+    volumes:
+      - chrome:/config
+    ports:
+      - 3000:3000
+      - 3001:3001
+    networks:
+      - proxy
+    dns:
+      - ${DNS_IP}
+    shm_size: "1gb"
+    restart: unless-stopped
+  
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    networks:
+      - proxy
+    ports:
+      - "${DNS_IP}:53:53/tcp"
+      - "${DNS_IP}:53:53/udp"
+    environment:
+      TZ: '${CONTAINER_TZ}'
+      WEBPASSWORD: '${PIHOLE_PASS}'
+    volumes:
+      - 'pihole:/etc/pihole'
+      - 'pihole-dns:/etc/dnsmasq.d'
+    cap_add:
+      - NET_ADMIN
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pihole.rule=Host(`pihole.${SERVER_DOMAIN}`)"
+      - "traefik.http.routers.pihole.entrypoints=https"
+      - "traefik.http.routers.pihole.tls=true"
+      - "traefik.http.services.pihole.loadbalancer.server.port=80"
+    restart: unless-stopped
+
+volumes:
+  chrome:
+    driver: local
+  pihole:
+    driver: local
+  pihole-dns:
+    driver: local
+
+networks:
+  proxy:
+    external: true
