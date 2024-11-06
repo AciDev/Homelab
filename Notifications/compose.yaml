@@ -1,13 +1,4 @@
 services:
-  ntfy-folders-init:
-    container_name: ntfy-folders-init
-    image: alpine:latest
-    restart: "no"
-    entrypoint: '/bin/sh -c "chown 1000:1000 /data/*"'
-    volumes:
-      - ntfy-cache:/data/ntfy-cache
-      - ntfy-data:/data/ntfy
-
   ntfy-client:
     container_name: ntfy-client
     image: binwiederhier/ntfy:latest
@@ -17,11 +8,10 @@ services:
       - TZ=${CONTAINER_TZ}
     user: 1000:1000
     volumes:
-      - ntfy-data:/etc/ntfy
+      - type: bind
+        source: ./../Docker-data/Notifications/Ntfy/data
+        target: /etc/ntfy
     restart: unless-stopped
-    depends_on:
-      ntfy-folders-init:
-        condition: service_completed_successfully
 
   ntfy-server:
     container_name: ntfy-server
@@ -40,15 +30,10 @@ services:
       - NTFY_CACHE_DURATION=12h
     user: 1000:1000
     volumes:
-      - ntfy-cache:/var/cache/ntfy
-      - ntfy-data:/etc/ntfy
+      - type: bind
+        source: ./../Docker-data/Notifications/Ntfy/cache
+        target: /var/cache/ntfy
+      - type: bind
+        source: ./../Docker-data/Notifications/Ntfy/data
+        target: /etc/ntfy
     restart: unless-stopped
-    depends_on:
-      ntfy-folders-init:
-        condition: service_completed_successfully
-
-volumes:
-  ntfy-data:
-    driver: local
-  ntfy-cache:
-    driver: local

@@ -1,0 +1,73 @@
+services:
+  grafana:
+    container_name: grafana
+    image: grafana/grafana-oss:main-ubuntu
+    user: "0"
+    networks:
+      - grafana-monitoring
+      - proxy
+    ports:
+      - 3040:3000
+    volumes:
+      - type: bind
+        source: ./../Docker-data/Monitoring/Grafana/data
+        target: /var/lib/grafana
+    restart: unless-stopped
+  influxdb:
+    container_name: influxdb
+    image: influxdb:latest
+    restart: unless-stopped
+    ports:
+      - 8086:8086
+      - 8089:8089/udp
+    networks:
+      - grafana-monitoring
+      - proxy
+    volumes:
+      - type: bind
+        source: ./../Docker-data/Monitoring/InfluxDB/data
+        target: /var/lib/influxdb2
+  telegraf:
+    container_name: telegraf
+    image: telegraf:latest
+    restart: unless-stopped
+    user: "telegraf:${DOCKER_GROUP}" #you need to find the GID of Docker if not added to Sudo group
+    networks:
+      - grafana-monitoring
+    volumes:
+        - type: bind
+          source: ./../Docker-data/Monitoring/Telegraf/data/telegraf.conf
+          target: /etc/telegraf/telegraf.conf
+          read_only: true
+        - type: bind
+          source: /
+          target: /hostfs
+          read_only: true
+        - type: bind
+          source: /var/run/docker.sock
+          target: /var/run/docker.sock
+    environment:
+        - HOST_ETC=/hostfs/etc
+        - HOST_PROC=/hostfs/proc
+        - HOST_SYS=/hostfs/sys
+        - HOST_VAR=/hostfs/var
+        - HOST_RUN=/hostfs/run
+        - HOST_MOUNT_PREFIX=/hostfs
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    ports:
+      - 9090:9090
+    volumes:
+      - type: bind
+        source: ./../Docker-data/Monitoring/Prometheus/data/prometheus.yml
+        target: /etc/prometheus/prometheus.yml
+    networks:
+      - grafana-monitoring
+      - proxy
+
+networks:
+  grafana-monitoring:
+  proxy:
+    external: true
