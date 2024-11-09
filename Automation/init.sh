@@ -34,11 +34,11 @@ own () {
 # Code goes here
 
 echo "Setting up N8N folders"
-directory "N8N/data"
+own "N8N/data"
 directory "N8N/postgres"
 
 echo "Setting up Kestra folders"
-own "Kestra/data"
+directory "Kestra/data"
 directory "Kestra/postgres"
 
 echo "Complete"
