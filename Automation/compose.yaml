@@ -89,9 +89,7 @@ services:
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
-      - type: bind
-        source: /tmp/kestra-wd
-        target: /tmp/kestra-wd
+      - /tmp/kestra-wd:/tmp/kestra-wd
     environment:
       KESTRA_CONFIGURATION: |
         datasources:
