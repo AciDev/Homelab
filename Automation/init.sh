@@ -38,7 +38,7 @@ directory "N8N/data"
 directory "N8N/postgres"
 
 echo "Setting up Kestra folders"
-directory "Kestra/data"
+own "Kestra/data"
 directory "Kestra/postgres"
 
 echo "Complete"
