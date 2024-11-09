@@ -28,6 +28,9 @@ services:
     image: gcr.io/cadvisor/cadvisor:latest 
     container_name: cadvisor 
     restart: always
+    command:
+      - '--housekeeping_interval=55s'
+      - '--docker_only'
     ports:
       - 9111:8080
     volumes: 
