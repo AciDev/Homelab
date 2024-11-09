@@ -36,12 +36,6 @@ own () {
 echo "Setting up Grafana folders"
 directory "Grafana/data"
 
-echo "Setting up Influx DB folders"
-directory "InfluxDB/data"
-
-echo "Setting up Telegraf folders"
-directory "Telegraf/data"
-
 echo "Setting up Prometheus folders"
 directory "Prometheus/data"
 
