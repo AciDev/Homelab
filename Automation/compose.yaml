@@ -4,7 +4,9 @@ services:
     image: postgres:alpine
     restart: unless-stopped
     volumes:
-      - n8n-postgres-data:/var/lib/postgresql/data
+      - type: bind
+        source: ./../Docker-data/Automation/N8N/postgres
+        target: /var/lib/postgresql/data
     environment:
       - POSTGRES_DB=n8n
       - POSTGRES_USER=${N8N_PSQL_USER}
@@ -33,7 +35,9 @@ services:
       - GENERIC_TIMEZONE=${CONTAINER_TZ}
       - WEBHOOK_URL=https://n8n.${SERVER_DOMAIN}/
     volumes:
-      - n8n-storage:/home/node/.n8n
+      - type: bind
+        source: ./../Docker-data/Automation/N8N/data
+        target: /home/node/.n8n
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.n8n.entrypoints=http"
@@ -58,7 +62,9 @@ services:
     image: postgres:alpine
     restart: unless-stopped
     volumes:
-      - kestra-postgres-data:/var/lib/postgresql/data
+      - type: bind
+        source: ./../Docker-data/Automation/Kestra/postgres
+        target: /var/lib/postgresql/data
     environment:
       - POSTGRES_DB=kestra
       - POSTGRES_USER=${KESTRA_PSQL_USER}
@@ -77,9 +83,15 @@ services:
     command: server standalone
     restart: unless-stopped
     volumes:
-      - kestra-data:/app/storage
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /tmp/kestra-wd:/tmp/kestra-wd
+      - type: bind
+        source: ./../Docker-data/Automation/Kestra/data
+        target: /app/storage
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: bind
+        source: /tmp/kestra-wd
+        target: /tmp/kestra-wd
     environment:
       KESTRA_CONFIGURATION: |
         datasources:
@@ -108,20 +120,12 @@ services:
           url: https://kestra.${SERVER_DOMAIN}/
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.kestra.entrypoints=http"
-      - "traefik.http.routers.kestra.rule=Host(`kestra.${SERVER_DOMAIN}`)"
-      - "traefik.http.middlewares.kestra-https-redirect.redirectscheme.scheme=https"
-      - "traefik.http.routers.kestra.middlewares=kestra-https-redirect"
       - "traefik.http.routers.kestra-secure.entrypoints=https"
       - "traefik.http.routers.kestra-secure.rule=Host(`kestra.${SERVER_DOMAIN}`)"
       - "traefik.http.routers.kestra-secure.tls=true"
       - "traefik.http.routers.kestra-secure.service=kestra"
       - "traefik.http.services.kestra.loadbalancer.server.scheme=http" 
       - "traefik.http.services.kestra.loadbalancer.server.port=8080"
-      - "traefik.http.routers.kestra-m.entrypoints=http"
-      - "traefik.http.routers.kestra-m.rule=Host(`kestra-m.${SERVER_DOMAIN}`)"
-      - "traefik.http.middlewares.kestra-m-https-redirect.redirectscheme.scheme=https"
-      - "traefik.http.routers.kestra-m.middlewares=kestra-m-https-redirect"
       - "traefik.http.routers.kestra-m-secure.entrypoints=https"
       - "traefik.http.routers.kestra-m-secure.rule=Host(`kestra-m.${SERVER_DOMAIN}`)"
       - "traefik.http.routers.kestra-m-secure.tls=true"
@@ -134,16 +138,6 @@ services:
     depends_on:
       kestra-postgres:
         condition: service_healthy
-
-volumes:
-  n8n-postgres-data:
-    driver: local
-  n8n-storage:
-    driver: local
-  kestra-postgres-data:
-    driver: local
-  kestra-data:
-    driver: local
 
 networks:
   proxy:
