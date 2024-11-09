@@ -30,7 +30,7 @@ services:
     restart: always
     command:
       - '--housekeeping_interval=55s'
-      - '--docker_only'
+      - '--docker_only=true'
     ports:
       - 9111:8080
     volumes: 
@@ -64,8 +64,6 @@ services:
   node_exporter:
     image: quay.io/prometheus/node-exporter:latest
     container_name: node_exporter
-    ports:
-      - 9100:9100
     command:
       - '--path.rootfs=/host'
     network_mode: host
