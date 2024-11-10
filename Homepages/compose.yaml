@@ -1,0 +1,92 @@
+services:
+  homarr:
+    container_name: homarr
+    image: ghcr.io/ajnart/homarr:latest
+    restart: unless-stopped
+    environment:
+      - TZ=${CONTAINER_TZ}
+      - DEFAULT_COLOR_SCHEME=dark
+      - DISABLE_ANALYTICS=true
+    volumes:
+      - type: bind
+        source: ./../Docker-data/Homepages/Homarr/data
+        target: /app/public/data
+      - type: bind
+        source: ./../Docker-data/Homepages/Homarr/icons
+        target: /app/public/icons
+      - type: bind
+        source: ./../Docker-data/Homepages/Homarr/configs
+        target: /app/data/configs
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+    ports:
+      - 7575:7575
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homarr-secure.entrypoints=https"
+      - "traefik.http.routers.homarr-secure.rule=Host(`homarr.${SERVER_DOMAIN}`)"
+      - "traefik.http.routers.homarr-secure.tls=true"
+      - "traefik.http.routers.homarr-secure.service=homarr"
+      - "traefik.http.services.homarr.loadbalancer.server.scheme=http" 
+      - "traefik.http.services.homarr.loadbalancer.server.port=7575"
+      - "traefik.docker.network=proxy"
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    environment:
+      PUID: 1000
+      PGID: 1000
+    ports:
+      - 3060:3000
+    volumes:
+      - type: bind
+        source: ./../Docker-data/Homepages/Homepage/config
+        target: /app/config
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homepage-secure.entrypoints=https"
+      - "traefik.http.routers.homepage-secure.rule=Host(`homepage.${SERVER_DOMAIN}`)"
+      - "traefik.http.routers.homepage-secure.tls=true"
+      - "traefik.http.routers.homepage-secure.service=homepage"
+      - "traefik.http.services.homepage.loadbalancer.server.scheme=http" 
+      - "traefik.http.services.homepage.loadbalancer.server.port=3000"
+      - "traefik.docker.network=proxy"
+  dashy:
+    image: lissy93/dashy
+    container_name: dashy
+    volumes:
+      - type: bind
+        source: ./../Docker-data/Homepages/Dashy/data
+        target: /app/user-data
+    ports:
+      - 4000:8080
+    environment:
+      - NODE_ENV=production
+      - UID=1000
+      - GID=1000
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'node', '/app/services/healthcheck']
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashy-secure.entrypoints=https"
+      - "traefik.http.routers.dashy-secure.rule=Host(`dashy.${SERVER_DOMAIN}`)"
+      - "traefik.http.routers.dashy-secure.tls=true"
+      - "traefik.http.routers.dashy-secure.service=dashy"
+      - "traefik.http.services.dashy.loadbalancer.server.scheme=http" 
+      - "traefik.http.services.dashy.loadbalancer.server.port=8080"
+      - "traefik.docker.network=proxy"
+
+networks:
+  proxy:
+    external: true

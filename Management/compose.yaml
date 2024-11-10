@@ -38,7 +38,7 @@ services:
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_REMOVE_VOLUMES=true
       - WATCHTOWER_SCHEDULE=0 0 4 * * *
-      - WATCHTOWER_ROLLING_RESTART=true
+      - WATCHTOWER_ROLLING_RESTART=false
     volumes:
       - type: bind
         source: /etc/localtime
