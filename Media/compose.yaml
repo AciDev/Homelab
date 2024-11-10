@@ -15,7 +15,13 @@ services:
       - 9696:9696/tcp # Prowlarr
       - 9696:9696/udp # Prowlarr
     volumes:
-      - gluetun-data:/gluetun
+      - type: bind
+        source: ./../Docker-data/Media/Gluetun/data
+        target: /gluetun 
+    networks:
+      proxy:
+      gluetun_network:
+          ipv4_address: 172.16.100.10
     environment:
       - VPN_SERVICE_PROVIDER=${VPN_PROVIDER}
       - OPENVPN_USER=${VPN_USER}
@@ -27,15 +33,6 @@ services:
       - PORT_FORWARD_ONLY=false
       - FIREWALL_OUTBOUND_SUBNETS=${VPN_OUTBOUND_SUBNET}
     restart: unless-stopped
-
-  folders-init:
-    image: alpine:latest
-    restart: "no"
-    entrypoint: '/bin/sh -c "chown 1000:1000 /data/*"'
-    volumes:
-      - downloads:/data/downloads
-      - tv:/data/tv
-      - movies:/data/movie
 
   qbittorrent:
     image: ghcr.io/hotio/qbittorrent:latest
@@ -49,11 +46,12 @@ services:
       - WEBUI_PORTS=9080/tcp,9080/udp
     restart: unless-stopped
     volumes:
-      - qbit-config:/config
-      - downloads:/data/downloads
-    depends_on:
-      folders-init:
-        condition: service_completed_successfully
+      - type: bind
+        source: ./../Docker-data/Media/Qbittorrent/config
+        target: /config  
+      - type: bind
+        source: ./../Docker-data/Media/Media/Downloads
+        target: /data/downloads
     
   prowlarr:
     image: ghcr.io/hotio/prowlarr:latest
@@ -66,7 +64,9 @@ services:
       - TZ=${CONTAINER_TZ}
     restart: unless-stopped
     volumes:
-      - prowlarr-config:/config
+      - type: bind
+        source: ./../Docker-data/Media/Prowlarr/config
+        target: /config  
 
   sonarr:
     container_name: sonarr
@@ -79,14 +79,23 @@ services:
       - UMASK=002
       - TZ=${CONTAINER_TZ}
     restart: unless-stopped
+    networks:
+      proxy:
+      gluetun_network:
+          ipv4_address: 172.16.100.20
     volumes:
-      - sonarr-config:/config
-      - downloads:/data/downloads
-      - tv:/data/tv
-      - movies:/data/movies
-    depends_on:
-      folders-init:
-        condition: service_completed_successfully
+      - type: bind
+        source: ./../Docker-data/Media/Sonarr/config
+        target: /config  
+      - type: bind
+        source: ./../Docker-data/Media/Media/TV
+        target: /data/tv
+      - type: bind
+        source: ./../Docker-data/Media/Media/Movies
+        target: /data/movies
+      - type: bind
+        source: ./../Docker-data/Media/Media/Downloads
+        target: /data/downloads
   
   radarr:
     container_name: radarr
@@ -99,14 +108,23 @@ services:
       - UMASK=002
       - TZ=${CONTAINER_TZ}
     restart: unless-stopped
+    networks:
+      proxy:
+      gluetun_network:
+          ipv4_address: 172.16.100.30
     volumes:
-      - radarr-config:/config
-      - downloads:/data/downloads
-      - tv:/data/tv
-      - movies:/data/movies
-    depends_on:
-      folders-init:
-        condition: service_completed_successfully
+      - type: bind
+        source: ./../Docker-data/Media/Radarr/config
+        target: /config  
+      - type: bind
+        source: ./../Docker-data/Media/Media/TV
+        target: /data/tv
+      - type: bind
+        source: ./../Docker-data/Media/Media/Movies
+        target: /data/movies
+      - type: bind
+        source: ./../Docker-data/Media/Media/Downloads
+        target: /data/downloads
   
   overseerr:
     container_name: overseerr
@@ -119,14 +137,21 @@ services:
       - UMASK=002
       - TZ=${CONTAINER_TZ}
     restart: unless-stopped
+    networks:
+      - proxy
     volumes:
-      - overseerr-config:/config
+      - type: bind
+        source: ./../Docker-data/Media/Overseerr/config
+        target: /config  
   
   flaresolverr:
     container_name: flaresolverr
     image: ghcr.io/flaresolverr/flaresolverr:latest
     ports:
       - "8191:8191"
+    networks:
+      gluetun_network:
+          ipv4_address: 172.16.100.40
     environment:
       - LOG_LEVEL=info
       - LOG_HTML=false
@@ -147,14 +172,21 @@ services:
       - PLEX_CLAIM_TOKEN=${PLEX_CLAIM_TOKEN}
       - PLEX_BETA_INSTALL=false
       - PLEX_PURGE_CODECS=false
+    networks:
+      - proxy
     volumes:
-      - plex-config:/config
-      - plex-transcode:/transcode
-      - tv:/data/tv
-      - movies:/data/movies
-    depends_on:
-      folders-init:
-        condition: service_completed_successfully
+      - type: bind
+        source: ./../Docker-data/Media/Plex/transcode
+        target: /transcode
+      - type: bind
+        source: ./../Docker-data/Media/Plex/config
+        target: /config      
+      - type: bind
+        source: ./../Docker-data/Media/Media/TV
+        target: /data/tv
+      - type: bind
+        source: ./../Docker-data/Media/Media/Movies
+        target: /data/movies
   
   tautulli:
     container_name: tautulli
@@ -167,8 +199,12 @@ services:
       - UMASK=002
       - TZ=${CONTAINER_TZ}
       - WEBUI_PORTS=8181/tcp,8181/udp
+    networks:
+      - proxy
     volumes:
-      - tautulli-config:/config
+      - type: bind
+        source: ./../Docker-data/Media/Tautulli/config
+        target: /config
   
   jellyseerr:
     container_name: jellyseerr
@@ -180,8 +216,12 @@ services:
       - PGID=1000
       - UMASK=002
       - TZ=${CONTAINER_TZ}
+    networks:
+      - proxy
     volumes:
-      - jellyseerr-config:/config
+      - type: bind
+        source: ./../Docker-data/Media/Jellyseerr/config
+        target: /config
   
   jellyfin:
     container_name: jellyfin
@@ -193,37 +233,24 @@ services:
       - PGID=1000
       - UMASK=002
       - TZ=${CONTAINER_TZ}
+    networks:
+      - proxy
     volumes:
-      - jellyfin-config:/config
-      - tv:/data/tv
-      - movies:/data/movies
+      - type: bind
+        source: ./../Docker-data/Media/Media/TV
+        target: /data/tv
+      - type: bind
+        source: ./../Docker-data/Media/Media/Movies
+        target: /data/movies
+      - type: bind
+        source: ./../Docker-data/Media/Jellyfin/config
+        target: /config
 
-volumes:
-  gluetun-data:
-    driver: local
-  qbit-config:
-    driver: local
-  prowlarr-config:
-    driver: local
-  sonarr-config:
-    driver: local
-  radarr-config:
-    driver: local
-  overseerr-config:
-    driver: local
-  plex-transcode:
-    driver: local
-  plex-config:
-    driver: local
-  tautulli-config:
-    driver: local
-  jellyseerr-config:
-    driver: local
-  jellyfin-config:
-    driver: local
-  downloads:
-    driver: local
-  tv:
-    driver: local
-  movies:
-    driver: local
+networks:
+  gluetun_network:
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.16.100.0/24"
+  proxy:
+    external: true

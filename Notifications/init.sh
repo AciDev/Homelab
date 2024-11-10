@@ -34,10 +34,8 @@ own () {
 # Code goes here
 
 echo "Setting up Ntfy folders"
-directory "Ntfy/data"
-directory "Ntfy/cache"
-chown 1000:1000 "$folder_loc/Ntfy/data"
-chown 1000:1000 "$folder_loc/Ntfy/cache"
+own "Ntfy/data"
+own "Ntfy/cache"
 
 echo "Complete"
 echo "$changed"
