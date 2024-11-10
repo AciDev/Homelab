@@ -33,6 +33,21 @@ services:
       - PORT_FORWARD_ONLY=false
       - FIREWALL_OUTBOUND_SUBNETS=${VPN_OUTBOUND_SUBNET}
     restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.qbittorrent-secure.entrypoints=https"
+      - "traefik.http.routers.qbittorrent-secure.rule=Host(`qbittorrent.${SERVER_DOMAIN}`)"
+      - "traefik.http.routers.qbittorrent-secure.tls=true"
+      - "traefik.http.routers.qbittorrent-secure.service=qbittorrent"
+      - "traefik.http.services.qbittorrent.loadbalancer.server.scheme=http" 
+      - "traefik.http.services.qbittorrent.loadbalancer.server.port=9080"
+      - "traefik.http.routers.prowlarr-secure.entrypoints=https"
+      - "traefik.http.routers.prowlarr-secure.rule=Host(`prowlarr.${SERVER_DOMAIN}`)"
+      - "traefik.http.routers.prowlarr-secure.tls=true"
+      - "traefik.http.routers.prowlarr-secure.service=prowlarr"
+      - "traefik.http.services.prowlarr.loadbalancer.server.scheme=http" 
+      - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
+      - "traefik.docker.network=proxy"
 
   qbittorrent:
     image: ghcr.io/hotio/qbittorrent:latest
@@ -96,6 +111,15 @@ services:
       - type: bind
         source: ./../Docker-data/Media/Media/Downloads
         target: /data/downloads
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sonarr-secure.entrypoints=https"
+      - "traefik.http.routers.sonarr-secure.rule=Host(`sonarr.${SERVER_DOMAIN}`)"
+      - "traefik.http.routers.sonarr-secure.tls=true"
+      - "traefik.http.routers.sonarr-secure.service=sonarr"
+      - "traefik.http.services.sonarr.loadbalancer.server.scheme=http" 
+      - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
+      - "traefik.docker.network=proxy"
   
   radarr:
     container_name: radarr
@@ -125,6 +149,15 @@ services:
       - type: bind
         source: ./../Docker-data/Media/Media/Downloads
         target: /data/downloads
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.radarr-secure.entrypoints=https"
+      - "traefik.http.routers.radarr-secure.rule=Host(`radarr.${SERVER_DOMAIN}`)"
+      - "traefik.http.routers.radarr-secure.tls=true"
+      - "traefik.http.routers.radarr-secure.service=radarr"
+      - "traefik.http.services.radarr.loadbalancer.server.scheme=http" 
+      - "traefik.http.services.radarr.loadbalancer.server.port=7878"
+      - "traefik.docker.network=proxy"
   
   overseerr:
     container_name: overseerr
@@ -142,7 +175,16 @@ services:
     volumes:
       - type: bind
         source: ./../Docker-data/Media/Overseerr/config
-        target: /config  
+        target: /config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.overseerr-secure.entrypoints=https"
+      - "traefik.http.routers.overseerr-secure.rule=Host(`overseerr.${SERVER_DOMAIN}`)"
+      - "traefik.http.routers.overseerr-secure.tls=true"
+      - "traefik.http.routers.overseerr-secure.service=overseerr"
+      - "traefik.http.services.overseerr.loadbalancer.server.scheme=http" 
+      - "traefik.http.services.overseerr.loadbalancer.server.port=5055"
+      - "traefik.docker.network=proxy"  
   
   flaresolverr:
     container_name: flaresolverr
@@ -187,6 +229,15 @@ services:
       - type: bind
         source: ./../Docker-data/Media/Media/Movies
         target: /data/movies
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.plex-secure.entrypoints=https"
+      - "traefik.http.routers.plex-secure.rule=Host(`plex.${SERVER_DOMAIN}`)"
+      - "traefik.http.routers.plex-secure.tls=true"
+      - "traefik.http.routers.plex-secure.service=plex"
+      - "traefik.http.services.plex.loadbalancer.server.scheme=http" 
+      - "traefik.http.services.plex.loadbalancer.server.port=32400"
+      - "traefik.docker.network=proxy"
   
   tautulli:
     container_name: tautulli
@@ -205,6 +256,15 @@ services:
       - type: bind
         source: ./../Docker-data/Media/Tautulli/config
         target: /config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tautulli-secure.entrypoints=https"
+      - "traefik.http.routers.tautulli-secure.rule=Host(`tautulli.${SERVER_DOMAIN}`)"
+      - "traefik.http.routers.tautulli-secure.tls=true"
+      - "traefik.http.routers.tautulli-secure.service=tautulli"
+      - "traefik.http.services.tautulli.loadbalancer.server.scheme=http" 
+      - "traefik.http.services.tautulli.loadbalancer.server.port=8181"
+      - "traefik.docker.network=proxy"
   
   jellyseerr:
     container_name: jellyseerr
@@ -222,6 +282,15 @@ services:
       - type: bind
         source: ./../Docker-data/Media/Jellyseerr/config
         target: /config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jellyseerr-secure.entrypoints=https"
+      - "traefik.http.routers.jellyseerr-secure.rule=Host(`jellyseerr.${SERVER_DOMAIN}`)"
+      - "traefik.http.routers.jellyseerr-secure.tls=true"
+      - "traefik.http.routers.jellyseerr-secure.service=jellyseerr"
+      - "traefik.http.services.jellyseerr.loadbalancer.server.scheme=http" 
+      - "traefik.http.services.jellyseerr.loadbalancer.server.port=5055"
+      - "traefik.docker.network=proxy"
   
   jellyfin:
     container_name: jellyfin
@@ -245,6 +314,15 @@ services:
       - type: bind
         source: ./../Docker-data/Media/Jellyfin/config
         target: /config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jellyfin-secure.entrypoints=https"
+      - "traefik.http.routers.jellyfin-secure.rule=Host(`jellyfin.${SERVER_DOMAIN}`)"
+      - "traefik.http.routers.jellyfin-secure.tls=true"
+      - "traefik.http.routers.jellyfin-secure.service=jellyfin"
+      - "traefik.http.services.jellyfin.loadbalancer.server.scheme=http" 
+      - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
+      - "traefik.docker.network=proxy"
 
 networks:
   gluetun_network:
