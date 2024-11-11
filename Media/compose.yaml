@@ -229,6 +229,7 @@ services:
       - type: bind
         source: ./../Docker-data/Media/Media/Movies
         target: /data/movies
+    restart: unless-stopped
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.plex-secure.entrypoints=https"
@@ -256,6 +257,7 @@ services:
       - type: bind
         source: ./../Docker-data/Media/Tautulli/config
         target: /config
+    restart: unless-stopped
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.tautulli-secure.entrypoints=https"
@@ -282,6 +284,7 @@ services:
       - type: bind
         source: ./../Docker-data/Media/Jellyseerr/config
         target: /config
+    restart: unless-stopped
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.jellyseerr-secure.entrypoints=https"
@@ -314,6 +317,7 @@ services:
       - type: bind
         source: ./../Docker-data/Media/Jellyfin/config
         target: /config
+    restart: unless-stopped
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.jellyfin-secure.entrypoints=https"
