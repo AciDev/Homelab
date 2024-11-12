@@ -12,6 +12,15 @@ services:
         source: ./../Docker-data/Monitoring/Grafana/data
         target: /var/lib/grafana
     restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana-secure.entrypoints=https"
+      - "traefik.http.routers.grafana-secure.rule=Host(`grafana.${SERVER_DOMAIN}`)"
+      - "traefik.http.routers.grafana-secure.tls=true"
+      - "traefik.http.routers.grafana-secure.service=grafana"
+      - "traefik.http.services.grafana.loadbalancer.server.scheme=http" 
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+      - "traefik.docker.network=proxy"
 
   prometheus:
     image: prom/prometheus:latest
@@ -25,6 +34,15 @@ services:
         target: /etc/prometheus/prometheus.yml
     networks:
       - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prometheus-secure.entrypoints=https"
+      - "traefik.http.routers.prometheus-secure.rule=Host(`prometheus.${SERVER_DOMAIN}`)"
+      - "traefik.http.routers.prometheus-secure.tls=true"
+      - "traefik.http.routers.prometheus-secure.service=prometheus"
+      - "traefik.http.services.prometheus.loadbalancer.server.scheme=http" 
+      - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
+      - "traefik.docker.network=proxy"
 
   node_exporter:
     image: quay.io/prometheus/node-exporter:latest
@@ -55,6 +73,15 @@ services:
       - type: bind
         source: ./../Docker-data/Monitoring/InfluxDB/data
         target: /var/lib/influxdb2
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.influxdb-secure.entrypoints=https"
+      - "traefik.http.routers.influxdb-secure.rule=Host(`influxdb.${SERVER_DOMAIN}`)"
+      - "traefik.http.routers.influxdb-secure.tls=true"
+      - "traefik.http.routers.influxdb-secure.service=influxdb"
+      - "traefik.http.services.influxdb.loadbalancer.server.scheme=http" 
+      - "traefik.http.services.influxdb.loadbalancer.server.port=8086"
+      - "traefik.docker.network=proxy"
 
   telegraf:
     container_name: telegraf

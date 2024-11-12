@@ -1,0 +1,41 @@
+services:
+  emulatorjs:
+    image: lscr.io/linuxserver/emulatorjs:latest
+    container_name: emulatorjs
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${CONTAINER_TZ}
+    volumes:
+      - type: bind
+        source: ./../Docker-data/Sync/EmulatorJS/config
+        target: /config
+      - type: bind
+        source: ./../Docker-data/Sync/EmulatorJS/data
+        target: /data
+    networks:
+      - proxy
+    ports:
+      - 3080:3000
+      - 6969:80
+      - 4001:4001
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.emulatorjs-config-secure.entrypoints=https"
+      - "traefik.http.routers.emulatorjs-config-secure.rule=Host(`emulatorjs-config.${SERVER_DOMAIN}`)"
+      - "traefik.http.routers.emulatorjs-config-secure.tls=true"
+      - "traefik.http.routers.emulatorjs-config-secure.service=emulatorjs-config"
+      - "traefik.http.services.emulatorjs-config.loadbalancer.server.scheme=http" 
+      - "traefik.http.services.emulatorjs-config.loadbalancer.server.port=3000"
+      - "traefik.http.routers.emulatorjs-secure.entrypoints=https"
+      - "traefik.http.routers.emulatorjs-secure.rule=Host(`emulatorjs.${SERVER_DOMAIN}`)"
+      - "traefik.http.routers.emulatorjs-secure.tls=true"
+      - "traefik.http.routers.emulatorjs-secure.service=emulatorjs"
+      - "traefik.http.services.emulatorjs.loadbalancer.server.scheme=http" 
+      - "traefik.http.services.emulatorjs.loadbalancer.server.port=80"
+      - "traefik.docker.network=proxy"
+
+networks:
+  proxy:
+    external: true
