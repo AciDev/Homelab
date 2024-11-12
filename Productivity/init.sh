@@ -33,17 +33,14 @@ own () {
 
 # Code goes here
 
-echo "Setting up Grafana folders"
-directory "Grafana/data"
+echo "Setting up Stirling folders"
+directory "Stirling/data"
+directory "Stirling/logs"
+directory "Stirling/configs"
 
-echo "Setting up Prometheus folders"
-directory "Prometheus/data"
-
-echo "Setting up Influx DB folders"
-directory "InfluxDB/data"
-
-echo "Setting up Telegraf folders"
-directory "Telegraf/data"
+echo "Setting up Kasm folders"
+directory "Kasm/data"
+directory "Kasm/profiles"
 
 echo "Complete"
 echo "$changed"

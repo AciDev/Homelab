@@ -1,0 +1,77 @@
+services:
+  stirling-pdf:
+    container_name: Stirling-PDF
+    image: frooodle/s-pdf:latest
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+    volumes:
+      - type: bind
+        source: ./../Docker-data/Productivity/Stirling/data
+        target: /usr/share/tessdata
+      - type: bind
+        source: ./../Docker-data/Productivity/Stirling/configs
+        target: /configs
+      - type: bind
+        source: ./../Docker-data/Productivity/Stirling/logs
+        target: /logs
+    environment:
+      DOCKER_ENABLE_SECURITY: "false"
+      SECURITY_ENABLELOGIN: "false"
+      LANGS: "en_GB"
+      SYSTEM_DEFAULTLOCALE: en-GB
+      UI_APPNAME: ${STIRLING_NAME}
+      UI_HOMEDESCRIPTION: ${STIRLING_NAME}
+      UI_APPNAMENAVBAR: ${STIRLING_NAME}
+      SYSTEM_MAXFILESIZE: "100"
+      METRICS_ENABLED: "false"
+      SYSTEM_GOOGLEVISIBILITY: "false"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.stirling-secure.entrypoints=https"
+      - "traefik.http.routers.stirling-secure.rule=Host(`stirling.${SERVER_DOMAIN}`)"
+      - "traefik.http.routers.stirling-secure.tls=true"
+      - "traefik.http.routers.stirling-secure.service=stirling"
+      - "traefik.http.services.stirling.loadbalancer.server.scheme=http" 
+      - "traefik.http.services.stirling.loadbalancer.server.port=8080"
+      - "traefik.docker.network=proxy"
+    restart: unless-stopped
+    networks:
+      - proxy
+
+  kasm:
+    image: lscr.io/linuxserver/kasm:latest
+    container_name: kasm
+    privileged: true
+    environment:
+      - KASM_PORT=443
+    volumes:
+      - type: bind
+        source: ./../Docker-data/Productivity/Kasm/data
+        target: /opt
+      - type: bind
+        source: ./../Docker-data/Productivity/Kasm/profiles
+        target: /profiles
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.kasm-secure.entrypoints=https"
+      - "traefik.http.routers.kasm-secure.rule=Host(`kasm.${SERVER_DOMAIN}`)"
+      - "traefik.http.routers.kasm-secure.tls=true"
+      - "traefik.http.routers.kasm-secure.service=kasm"
+      - "traefik.http.services.kasm.loadbalancer.server.scheme=https" 
+      - "traefik.http.services.kasm.loadbalancer.server.port=443"
+      - "traefik.http.routers.monitorkasm-secure.entrypoints=https"
+      - "traefik.http.routers.monitorkasm-secure.rule=Host(`monitor-kasm.${SERVER_DOMAIN}`)"
+      - "traefik.http.routers.monitorkasm-secure.tls=true"
+      - "traefik.http.routers.monitorkasm-secure.service=monitorkasm"
+      - "traefik.http.services.monitorkasm.loadbalancer.server.scheme=https" 
+      - "traefik.http.services.monitorkasm.loadbalancer.server.port=3000"
+      - "traefik.docker.network=proxy"
+    restart: unless-stopped
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
