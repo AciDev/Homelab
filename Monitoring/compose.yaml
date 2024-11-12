@@ -50,7 +50,6 @@ services:
       - 8086:8086
       - 8089:8089/udp
     networks:
-      - grafana-monitoring
       - proxy
     volumes:
       - type: bind
@@ -62,8 +61,6 @@ services:
     image: telegraf:latest
     restart: unless-stopped
     user: "telegraf:${DOCKER_GROUP}"
-    networks:
-      - grafana-monitoring
     volumes:
         - type: bind
           source: ./../Docker-data/Monitoring/Telegraf/data/telegraf.conf
