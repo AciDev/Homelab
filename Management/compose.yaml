@@ -84,7 +84,7 @@ services:
         source: ./../Docker-data/Management/Traefik/data/acme.json
         target: /acme.json
     labels:
-      - "traefik.enable=true"
+      - "traefik.enable=${TRAEFIK_DASHBOARD}"
       - "traefik.http.routers.traefik.entrypoints=http"
       - "traefik.http.routers.traefik.rule=Host(`traefik-dashboard.${SERVER_DOMAIN}`)"
       - "traefik.http.middlewares.traefik-auth.basicauth.users=${TRAEFIK_DASHBOARD_CREDENTIALS}"
