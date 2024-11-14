@@ -67,6 +67,8 @@ services:
       - type: bind
         source: ./../Docker-data/Media/Media/Downloads
         target: /data/downloads
+    depends_on:
+      - gluetun
     
   prowlarr:
     image: ghcr.io/hotio/prowlarr:latest
@@ -82,6 +84,8 @@ services:
       - type: bind
         source: ./../Docker-data/Media/Prowlarr/config
         target: /config  
+    depends_on:
+      - gluetun
 
   sonarr:
     container_name: sonarr

@@ -1,0 +1,45 @@
+services:
+  ollama:
+    volumes:
+      - type: bind
+        source: ./../Docker-data/AI/Ollama/data
+        target: /root/.ollama
+    container_name: ollama
+    tty: true
+    restart: unless-stopped
+    networks:
+      - proxy
+    image: ollama/ollama:latest
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    volumes:
+      - type: bind
+        source: ./../Docker-data/AI/OpenWebUI/data
+        target: /app/backend/data
+    depends_on:
+      - ollama
+    ports:
+      - 8485:8080
+    environment:
+      - 'OLLAMA_BASE_URL=http://ollama:11434'
+      - 'WEBUI_SECRET_KEY='
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    restart: unless-stopped
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ollama-secure.entrypoints=https"
+      - "traefik.http.routers.ollama-secure.rule=Host(`ollama.${SERVER_DOMAIN}`)"
+      - "traefik.http.routers.ollama-secure.tls=true"
+      - "traefik.http.routers.ollama-secure.service=ollama"
+      - "traefik.http.services.ollama.loadbalancer.server.scheme=http" 
+      - "traefik.http.services.ollama.loadbalancer.server.port=8080"
+      - "traefik.docker.network=proxy"
+
+networks:
+  proxy:
+    external: true
