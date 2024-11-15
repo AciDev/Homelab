@@ -44,6 +44,8 @@ services:
       - proxy
     ports:
       - 3060:3000
+    env_file:
+      - Homepages.env
     volumes:
       - type: bind
         source: ./../Docker-data/Homepages/Homepage/config
