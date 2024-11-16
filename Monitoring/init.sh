@@ -45,6 +45,11 @@ directory "InfluxDB/data"
 echo "Setting up Telegraf folders"
 directory "Telegraf/data"
 
+echo "Setting up Netdata folders"
+directory "Netdata/lib"
+directory "Netdata/cache"
+directory "Netdata/config"
+
 echo "Complete"
 echo "$changed"
 exit 0

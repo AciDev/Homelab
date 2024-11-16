@@ -11,6 +11,9 @@ services:
       - proxy
     volumes:
       - type: bind
+        source: ./../Docker-data/Homepages/Homarr/database
+        target: /data
+      - type: bind
         source: ./../Docker-data/Homepages/Homarr/data
         target: /app/public/data
       - type: bind

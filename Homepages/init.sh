@@ -37,6 +37,7 @@ echo "Setting up Homarr folders"
 directory "Homarr/data"
 directory "Homarr/icons"
 directory "Homarr/configs"
+directory "Homarr/database"
 
 echo "Setting up Homepage folders"
 own "Homepage/config"
