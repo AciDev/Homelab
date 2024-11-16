@@ -37,9 +37,11 @@ echo "Setting up Grafana folders"
 directory "Grafana/data"
 
 echo "Setting up Prometheus folders"
+directory "Prometheus/root"
 directory "Prometheus/data"
 
 echo "Setting up Influx DB folders"
+directory "InfluxDB/etc"
 directory "InfluxDB/data"
 
 echo "Setting up Telegraf folders"

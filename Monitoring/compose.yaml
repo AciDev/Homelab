@@ -30,6 +30,9 @@ services:
       - 9090:9090
     volumes:
       - type: bind
+        source: ./../Docker-data/Monitoring/Prometheus/root
+        target: /prometheus
+      - type: bind
         source: ./../Docker-data/Monitoring/Prometheus/data/prometheus.yml
         target: /etc/prometheus/prometheus.yml
     networks:
@@ -73,6 +76,9 @@ services:
       - type: bind
         source: ./../Docker-data/Monitoring/InfluxDB/data
         target: /var/lib/influxdb2
+      - type: bind
+        source: ./../Docker-data/Monitoring/InfluxDB/etc
+        target: /etc/influxdb2
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.influxdb-secure.entrypoints=https"
