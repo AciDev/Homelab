@@ -24,7 +24,7 @@ services:
       - proxy
     ports:
       - 25:25
-      - 8888:80
+      - 8889:80
     environment:
       - NTFY_WEB_ROOT=${WEB_ROOT}
       - TZ=${CONTAINER_TZ}
