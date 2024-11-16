@@ -8,10 +8,10 @@ services:
       - TZ=${CONTAINER_TZ}
     volumes:
       - type: bind
-        source: ./../Docker-data/Sync/EmulatorJS/config
+        source: ./../Docker-data/Fun/EmulatorJS/config
         target: /config
       - type: bind
-        source: ./../Docker-data/Sync/EmulatorJS/data
+        source: ./../Docker-data/Fun/EmulatorJS/data
         target: /data
     networks:
       - proxy
