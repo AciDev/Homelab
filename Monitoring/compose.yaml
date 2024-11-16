@@ -107,6 +107,8 @@ services:
         - HOST_VAR=/hostfs/var
         - HOST_RUN=/hostfs/run
         - HOST_MOUNT_PREFIX=/hostfs
+    networks:
+      - proxy
 
   netdata:
     image: netdata/netdata:stable
