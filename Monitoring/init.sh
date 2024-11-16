@@ -36,8 +36,20 @@ own () {
 echo "Setting up Grafana folders"
 directory "Grafana/data"
 
+own_65534 () {
+    directory "$1"
+    local directory_path="$folder_loc/$1"
+    local user="$(stat -c %u "$directory_path")"
+    local group="$(stat -c %g "$directory_path")"
+    if [ "$user" -ne 65534 ] || [ "$group" -ne 65534 ]; then
+        echo "Chowning 65534:65534 $1"
+        chown 65534:65534 "$directory_path"
+        changed=true
+    fi
+}
+
 echo "Setting up Prometheus folders"
-directory "Prometheus/root"
+own_65534 "Prometheus/root"
 directory "Prometheus/data"
 
 echo "Setting up Influx DB folders"
