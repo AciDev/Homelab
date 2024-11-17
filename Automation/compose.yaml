@@ -40,10 +40,6 @@ services:
         target: /home/node/.n8n
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.n8n.entrypoints=http"
-      - "traefik.http.routers.n8n.rule=Host(`n8n.${SERVER_DOMAIN}`)"
-      - "traefik.http.middlewares.n8n-https-redirect.redirectscheme.scheme=https"
-      - "traefik.http.routers.n8n.middlewares=n8n-https-redirect"
       - "traefik.http.routers.n8n-secure.entrypoints=https"
       - "traefik.http.routers.n8n-secure.rule=Host(`n8n.${SERVER_DOMAIN}`)"
       - "traefik.http.routers.n8n-secure.tls=true"

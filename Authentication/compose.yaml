@@ -70,10 +70,6 @@ services:
       - proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.authentik.entrypoints=http"
-      - "traefik.http.routers.authentik.rule=Host(`authentik.${SERVER_DOMAIN}`)"
-      - "traefik.http.middlewares.authentik-https-redirect.redirectscheme.scheme=https"
-      - "traefik.http.routers.authentik.middlewares=authentik-https-redirect"
       - "traefik.http.routers.authentik-secure.entrypoints=https"
       - "traefik.http.routers.authentik-secure.rule=Host(`authentik.${SERVER_DOMAIN}`)"
       - "traefik.http.routers.authentik-secure.tls=true"
