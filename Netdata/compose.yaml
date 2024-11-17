@@ -1,0 +1,62 @@
+services:
+  netdata:
+    image: netdata/netdata:stable
+    container_name: netdata
+    pid: host
+    network_mode: host
+    restart: unless-stopped
+    cap_add:
+      - SYS_PTRACE
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - type: bind
+        source: ./../Docker-data/Netdata/Netdata/lib
+        target: /var/lib/netdata
+      - type: bind
+        source: ./../Docker-data/Netdata/Netdata/cache
+        target: /var/cache/netdata
+      - type: bind
+        source: ./../Docker-data/Netdata/Netdata/config
+        target: /etc/netdata
+      - type: bind
+        source: /
+        target: /host/root
+        read_only: true
+        bind:
+          propagation: rslave
+      - type: bind
+        source: /etc/passwd
+        target: /host/etc/passwd
+        read_only: true
+      - type: bind
+        source: /etc/group
+        target: /host/etc/group
+        read_only: true
+      - type: bind
+        source: /etc/localtime
+        target: /etc/localtime
+        read_only: true
+      - type: bind
+        source: /proc
+        target: /host/proc
+        read_only: true
+      - type: bind
+        source: /sys
+        target: /host/sys
+        read_only: true
+      - type: bind
+        source: /etc/os-release
+        target: /host/etc/os-release
+        read_only: true
+      - type: bind
+        source: /var/log
+        target: /host/var/log
+        read_only: true
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+    env_file:
+      - Netdata.env
