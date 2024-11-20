@@ -28,14 +28,14 @@ services:
       - proxy
       - ollama_network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://127.0.0.1:8080"]
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 5s
     environment:
       - OLLAMA_BASE_URL=http://ollama:11434
-      - OAUTH_CLIENT_ID=${WEBUI_CLIENT_ID}
-      - OAUTH_CLIENT_SECRET=${WEBUI_CLIENT_SECRET}
-      - OPENID_PROVIDER_URL=https://authentik.${SERVER_DOMAIN}/application/o/${WEBUI_SLUG}/.well-known/openid-configuration
-      - OAUTH_PROVIDER_NAME=${WEBUI_PROVIDER_NAME}
-      - OAUTH_SCOPES=${WEBUI_SCOPES}
-      - OPENID_REDIRECT_URI=https://ollama.${SERVER_DOMAIN}/oauth/oidc/callback
     volumes:
       - type: bind
         source: /opt/homelab/Docker-data/AI/OpenWebUI/data
