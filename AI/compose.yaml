@@ -36,6 +36,8 @@ services:
       timeout: 5s
     environment:
       - OLLAMA_BASE_URL=http://ollama:11434
+    env_file:
+      - AI.env
     volumes:
       - type: bind
         source: /opt/homelab/Docker-data/AI/OpenWebUI/data
