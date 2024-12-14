@@ -40,6 +40,7 @@ services:
       - "traefik.http.routers.qbittorrent-secure.rule=Host(`qbittorrent.${SERVER_DOMAIN}`)"
       - "traefik.http.routers.qbittorrent-secure.tls=true"
       - "traefik.http.routers.qbittorrent-secure.service=qbittorrent"
+      - "traefik.http.routers.qbittorrent-secure.middlewares=${AUTHENTIK_MIDDLEWARE}"
       - "traefik.http.services.qbittorrent.loadbalancer.server.scheme=http" 
       - "traefik.http.services.qbittorrent.loadbalancer.server.port=9080"
       - "traefik.http.routers.prowlarr-secure.entrypoints=https"
@@ -220,6 +221,7 @@ services:
       - UMASK=002
       - TZ=${CONTAINER_TZ}
       - PLEX_CLAIM_TOKEN=${PLEX_CLAIM_TOKEN}
+      - PLEX_ADVERTISE_URL="https://plex.${SERVER_DOMAIN}"
       - PLEX_BETA_INSTALL=false
       - PLEX_PURGE_CODECS=false
     networks:
