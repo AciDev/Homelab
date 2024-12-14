@@ -12,13 +12,13 @@ services:
       - apparmor:unconfined
     volumes:
       - type: bind
-        source: ./../Docker-data/Netdata/Netdata/lib
+        source: /opt/homelab/Docker-data/Netdata/Netdata/lib
         target: /var/lib/netdata
       - type: bind
-        source: ./../Docker-data/Netdata/Netdata/cache
+        source: /opt/homelab/Docker-data/Netdata/Netdata/cache
         target: /var/cache/netdata
       - type: bind
-        source: ./../Docker-data/Netdata/Netdata/config
+        source: /opt/homelab/Docker-data/Netdata/Netdata/config
         target: /etc/netdata
       - type: bind
         source: /

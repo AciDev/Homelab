@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     volumes:
       - type: bind
-        source: ./../Docker-data/Authentication/Authentik/postgres
+        source: /opt/homelab/Docker-data/Authentication/Authentik/postgres
         target: /var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
@@ -33,7 +33,7 @@ services:
       timeout: 3s
     volumes:
       - type: bind
-        source: ./../Docker-data/Authentication/Authentik/redis
+        source: /opt/homelab/Docker-data/Authentication/Authentik/redis
         target: /data
     networks:
       - proxy
@@ -56,10 +56,10 @@ services:
         source: /var/run/docker.sock
         target: /var/run/docker.sock
       - type: bind
-        source: ./../Docker-data/Authentication/Authentik/media
+        source: /opt/homelab/Docker-data/Authentication/Authentik/media
         target: /media
       - type: bind
-        source: ./../Docker-data/Authentication/Authentik/custom-templates
+        source: /opt/homelab/Docker-data/Authentication/Authentik/custom-templates
         target: /templates
     depends_on:
       authentik_postgresql:
@@ -96,13 +96,13 @@ services:
         source: /var/run/docker.sock
         target: /var/run/docker.sock
       - type: bind
-        source: ./../Docker-data/Authentication/Authentik/media
+        source: /opt/homelab/Docker-data/Authentication/Authentik/media
         target: /media
       - type: bind
-        source: ./../Docker-data/Authentication/Authentik/certs
+        source: /opt/homelab/Docker-data/Authentication/Authentik/certs
         target: /certs
       - type: bind
-        source: ./../Docker-data/Authentication/Authentik/custom-templates
+        source: /opt/homelab/Docker-data/Authentication/Authentik/custom-templates
         target: /templates
     depends_on:
       authentik_postgresql:

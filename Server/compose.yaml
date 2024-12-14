@@ -37,10 +37,10 @@ services:
     user: 1000:1000
     volumes:
       - type: bind
-        source: ./../Docker-data/Server/Ntfy/cache
+        source: /opt/homelab/Docker-data/Server/Ntfy/cache
         target: /var/cache/ntfy
       - type: bind
-        source: ./../Docker-data/Server/Ntfy/data
+        source: /opt/homelab/Docker-data/Server/Ntfy/data
         target: /etc/ntfy
     restart: unless-stopped
 

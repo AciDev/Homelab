@@ -11,16 +11,16 @@ services:
       - proxy
     volumes:
       - type: bind
-        source: ./../Docker-data/Homepages/Homarr/database
+        source: /opt/homelab/Docker-data/Homepages/Homarr/database
         target: /data
       - type: bind
-        source: ./../Docker-data/Homepages/Homarr/data
+        source: /opt/homelab/Docker-data/Homepages/Homarr/data
         target: /app/public/data
       - type: bind
-        source: ./../Docker-data/Homepages/Homarr/icons
+        source: /opt/homelab/Docker-data/Homepages/Homarr/icons
         target: /app/public/icons
       - type: bind
-        source: ./../Docker-data/Homepages/Homarr/configs
+        source: /opt/homelab/Docker-data/Homepages/Homarr/configs
         target: /app/data/configs
       - type: bind
         source: /var/run/docker.sock
@@ -51,7 +51,7 @@ services:
       - Homepages.env
     volumes:
       - type: bind
-        source: ./../Docker-data/Homepages/Homepage/config
+        source: /opt/homelab/Docker-data/Homepages/Homepage/config
         target: /app/config
       - type: bind
         source: /var/run/docker.sock
@@ -73,7 +73,7 @@ services:
     container_name: dashy
     volumes:
       - type: bind
-        source: ./../Docker-data/Homepages/Dashy/data
+        source: /opt/homelab/Docker-data/Homepages/Dashy/data
         target: /app/user-data
     networks:
       - proxy

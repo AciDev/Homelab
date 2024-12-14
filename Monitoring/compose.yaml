@@ -9,7 +9,7 @@ services:
       - 3040:3000
     volumes:
       - type: bind
-        source: ./../Docker-data/Monitoring/Grafana/data
+        source: /opt/homelab/Docker-data/Monitoring/Grafana/data
         target: /var/lib/grafana
     restart: unless-stopped
     labels:
@@ -30,10 +30,10 @@ services:
       - 9090:9090
     volumes:
       - type: bind
-        source: ./../Docker-data/Monitoring/Prometheus/root
+        source: /opt/homelab/Docker-data/Monitoring/Prometheus/root
         target: /prometheus
       - type: bind
-        source: ./../Docker-data/Monitoring/Prometheus/data/prometheus.yml
+        source: /opt/homelab/Docker-data/Monitoring/Prometheus/data/prometheus.yml
         target: /etc/prometheus/prometheus.yml
     networks:
       - proxy
@@ -74,10 +74,10 @@ services:
       - proxy
     volumes:
       - type: bind
-        source: ./../Docker-data/Monitoring/InfluxDB/data
+        source: /opt/homelab/Docker-data/Monitoring/InfluxDB/data
         target: /var/lib/influxdb2
       - type: bind
-        source: ./../Docker-data/Monitoring/InfluxDB/etc
+        source: /opt/homelab/Docker-data/Monitoring/InfluxDB/etc
         target: /etc/influxdb2
     labels:
       - "traefik.enable=true"
@@ -96,7 +96,7 @@ services:
     user: "telegraf:${DOCKER_GROUP}"
     volumes:
         - type: bind
-          source: ./../Docker-data/Monitoring/Telegraf/data/telegraf.conf
+          source: /opt/homelab/Docker-data/Monitoring/Telegraf/data/telegraf.conf
           target: /etc/telegraf/telegraf.conf
           read_only: true
         - type: bind

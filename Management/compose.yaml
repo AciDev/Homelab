@@ -13,7 +13,7 @@ services:
         source: /var/run/docker.sock
         target: /var/run/docker.sock
       - type: bind
-        source: ./../Docker-data/Management/Portainer/data
+        source: /opt/homelab/Docker-data/Management/Portainer/data
         target: /data
     networks:
       - proxy
@@ -69,15 +69,15 @@ services:
         target: /var/run/docker.sock
         read_only: true
       - type: bind
-        source: ./../Docker-data/Management/Traefik/data/traefik.yml
+        source: /opt/homelab/Docker-data/Management/Traefik/data/traefik.yml
         target: /traefik.yml
         read_only: true
       - type: bind
-        source: ./../Docker-data/Management/Traefik/data/config/config.yml
+        source: /opt/homelab/Docker-data/Management/Traefik/data/config/config.yml
         target: /config.yml
         read_only: true
       - type: bind
-        source: ./../Docker-data/Management/Traefik/data/acme.json
+        source: /opt/homelab/Docker-data/Management/Traefik/data/acme.json
         target: /acme.json
     labels:
       - "traefik.enable=${TRAEFIK_DASHBOARD}"

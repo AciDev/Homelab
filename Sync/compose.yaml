@@ -8,10 +8,10 @@ services:
       - TZ=${CONTAINER_TZ}
     volumes:
       - type: bind
-        source: ./../Docker-data/Sync/Syncthing/config
+        source: /opt/homelab/Docker-data/Sync/Syncthing/config
         target: /config
       - type: bind
-        source: ./../Docker-data/Sync/Syncthing/data
+        source: /opt/homelab/Docker-data/Sync/Syncthing/data
         target: /data
     ports:
       - 8384:8384

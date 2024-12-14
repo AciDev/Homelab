@@ -8,13 +8,13 @@ services:
           memory: 4G
     volumes:
       - type: bind
-        source: ./../Docker-data/Productivity/Stirling/data
+        source: /opt/homelab/Docker-data/Productivity/Stirling/data
         target: /usr/share/tessdata
       - type: bind
-        source: ./../Docker-data/Productivity/Stirling/configs
+        source: /opt/homelab/Docker-data/Productivity/Stirling/configs
         target: /configs
       - type: bind
-        source: ./../Docker-data/Productivity/Stirling/logs
+        source: /opt/homelab/Docker-data/Productivity/Stirling/logs
         target: /logs
     environment:
       DOCKER_ENABLE_SECURITY: "false"
@@ -48,10 +48,10 @@ services:
       - KASM_PORT=443
     volumes:
       - type: bind
-        source: ./../Docker-data/Productivity/Kasm/data
+        source: /opt/homelab/Docker-data/Productivity/Kasm/data
         target: /opt
       - type: bind
-        source: ./../Docker-data/Productivity/Kasm/profiles
+        source: /opt/homelab/Docker-data/Productivity/Kasm/profiles
         target: /profiles
     labels:
       - "traefik.enable=true"

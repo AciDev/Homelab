@@ -11,7 +11,7 @@ services:
       - proxy
     volumes:
       - type: bind
-        source: ./../Docker-data/Notifications/Ntfy/data
+        source: /opt/homelab/Docker-data/Notifications/Ntfy/data
         target: /etc/ntfy
     restart: unless-stopped
 
@@ -35,10 +35,10 @@ services:
     user: 1000:1000
     volumes:
       - type: bind
-        source: ./../Docker-data/Notifications/Ntfy/cache
+        source: /opt/homelab/Docker-data/Notifications/Ntfy/cache
         target: /var/cache/ntfy
       - type: bind
-        source: ./../Docker-data/Notifications/Ntfy/data
+        source: /opt/homelab/Docker-data/Notifications/Ntfy/data
         target: /etc/ntfy
     restart: unless-stopped
     labels:

@@ -4,7 +4,7 @@ services:
     image: vaultwarden/server:latest
     volumes:
       - type: bind
-        source: ./../Docker-data/Security/Vaultwarden/data
+        source: /opt/homelab/Docker-data/Security/Vaultwarden/data
         target: /data
     restart: unless-stopped
     networks:

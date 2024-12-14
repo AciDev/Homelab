@@ -32,7 +32,7 @@ services:
       - FIREWALL_OUTBOUND_SUBNETS=${VPN_OUTBOUND_SUBNET}
     volumes:
       - type: bind
-        source: ./../Docker-data/Media/Gluetun/data
+        source: /opt/homelab/Docker-data/Media/Gluetun/data
         target: /gluetun 
     labels:
       - "traefik.enable=true"
@@ -65,10 +65,10 @@ services:
     restart: unless-stopped
     volumes:
       - type: bind
-        source: ./../Docker-data/Media/Qbittorrent/config
+        source: /opt/homelab/Docker-data/Media/Qbittorrent/config
         target: /config  
       - type: bind
-        source: ./../Docker-data/Media/Media/Downloads
+        source: /opt/homelab/Docker-data/Media/Media/Downloads
         target: /data/downloads
     depends_on:
       - gluetun
@@ -85,7 +85,7 @@ services:
     restart: unless-stopped
     volumes:
       - type: bind
-        source: ./../Docker-data/Media/Prowlarr/config
+        source: /opt/homelab/Docker-data/Media/Prowlarr/config
         target: /config  
     depends_on:
       - gluetun
@@ -107,16 +107,16 @@ services:
           ipv4_address: 172.16.100.20
     volumes:
       - type: bind
-        source: ./../Docker-data/Media/Sonarr/config
+        source: /opt/homelab/Docker-data/Media/Sonarr/config
         target: /config  
       - type: bind
-        source: ./../Docker-data/Media/Media/TV
+        source: /opt/homelab/Docker-data/Media/Media/TV
         target: /data/tv
       - type: bind
-        source: ./../Docker-data/Media/Media/Movies
+        source: /opt/homelab/Docker-data/Media/Media/Movies
         target: /data/movies
       - type: bind
-        source: ./../Docker-data/Media/Media/Downloads
+        source: /opt/homelab/Docker-data/Media/Media/Downloads
         target: /data/downloads
     labels:
       - "traefik.enable=true"
@@ -146,16 +146,16 @@ services:
           ipv4_address: 172.16.100.30
     volumes:
       - type: bind
-        source: ./../Docker-data/Media/Radarr/config
+        source: /opt/homelab/Docker-data/Media/Radarr/config
         target: /config  
       - type: bind
-        source: ./../Docker-data/Media/Media/TV
+        source: /opt/homelab/Docker-data/Media/Media/TV
         target: /data/tv
       - type: bind
-        source: ./../Docker-data/Media/Media/Movies
+        source: /opt/homelab/Docker-data/Media/Media/Movies
         target: /data/movies
       - type: bind
-        source: ./../Docker-data/Media/Media/Downloads
+        source: /opt/homelab/Docker-data/Media/Media/Downloads
         target: /data/downloads
     labels:
       - "traefik.enable=true"
@@ -183,7 +183,7 @@ services:
       - proxy
     volumes:
       - type: bind
-        source: ./../Docker-data/Media/Overseerr/config
+        source: /opt/homelab/Docker-data/Media/Overseerr/config
         target: /config
     labels:
       - "traefik.enable=true"
@@ -228,16 +228,16 @@ services:
       - proxy
     volumes:
       - type: bind
-        source: ./../Docker-data/Media/Plex/transcode
+        source: /opt/homelab/Docker-data/Media/Plex/transcode
         target: /transcode
       - type: bind
-        source: ./../Docker-data/Media/Plex/config
+        source: /opt/homelab/Docker-data/Media/Plex/config
         target: /config      
       - type: bind
-        source: ./../Docker-data/Media/Media/TV
+        source: /opt/homelab/Docker-data/Media/Media/TV
         target: /data/tv
       - type: bind
-        source: ./../Docker-data/Media/Media/Movies
+        source: /opt/homelab/Docker-data/Media/Media/Movies
         target: /data/movies
     restart: unless-stopped
     labels:
@@ -265,7 +265,7 @@ services:
       - proxy
     volumes:
       - type: bind
-        source: ./../Docker-data/Media/Tautulli/config
+        source: /opt/homelab/Docker-data/Media/Tautulli/config
         target: /config
     restart: unless-stopped
     labels:
@@ -292,7 +292,7 @@ services:
       - proxy
     volumes:
       - type: bind
-        source: ./../Docker-data/Media/Jellyseerr/config
+        source: /opt/homelab/Docker-data/Media/Jellyseerr/config
         target: /config
     restart: unless-stopped
     labels:
@@ -319,13 +319,13 @@ services:
       - proxy
     volumes:
       - type: bind
-        source: ./../Docker-data/Media/Media/TV
+        source: /opt/homelab/Docker-data/Media/Media/TV
         target: /data/tv
       - type: bind
-        source: ./../Docker-data/Media/Media/Movies
+        source: /opt/homelab/Docker-data/Media/Media/Movies
         target: /data/movies
       - type: bind
-        source: ./../Docker-data/Media/Jellyfin/config
+        source: /opt/homelab/Docker-data/Media/Jellyfin/config
         target: /config
     restart: unless-stopped
     labels:

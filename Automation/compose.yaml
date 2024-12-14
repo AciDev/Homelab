@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     volumes:
       - type: bind
-        source: ./../Docker-data/Automation/N8N/postgres
+        source: /opt/homelab/Docker-data/Automation/N8N/postgres
         target: /var/lib/postgresql/data
     environment:
       - POSTGRES_DB=n8n
@@ -36,7 +36,7 @@ services:
       - WEBHOOK_URL=https://n8n.${SERVER_DOMAIN}/
     volumes:
       - type: bind
-        source: ./../Docker-data/Automation/N8N/data
+        source: /opt/homelab/Docker-data/Automation/N8N/data
         target: /home/node/.n8n
     labels:
       - "traefik.enable=true"
@@ -59,7 +59,7 @@ services:
     restart: unless-stopped
     volumes:
       - type: bind
-        source: ./../Docker-data/Automation/Kestra/postgres
+        source: /opt/homelab/Docker-data/Automation/Kestra/postgres
         target: /var/lib/postgresql/data
     environment:
       - POSTGRES_DB=kestra
@@ -80,7 +80,7 @@ services:
     restart: unless-stopped
     volumes:
       - type: bind
-        source: ./../Docker-data/Automation/Kestra/data
+        source: /opt/homelab/Docker-data/Automation/Kestra/data
         target: /app/storage
       - type: bind
         source: /var/run/docker.sock
