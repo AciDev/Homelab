@@ -15,6 +15,7 @@ services:
       - "traefik.http.routers.vaultwarden-secure.rule=Host(`vaultwarden.${SERVER_DOMAIN}`)"
       - "traefik.http.routers.vaultwarden-secure.tls=true"
       - "traefik.http.routers.vaultwarden-secure.service=vaultwarden"
+      - "traefik.http.services.vaultwarden.loadbalancer.server.scheme=http" 
       - "traefik.http.services.vaultwarden.loadbalancer.server.port=80"
       - "traefik.docker.network=proxy"
     security_opt:
