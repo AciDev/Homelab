@@ -54,10 +54,12 @@ services:
       - type: bind
         source: /opt/homelab/Docker-data/Server/Atuin/config
         target: /config
+    links:
+      - atuin_postgresql:db
     environment:
       ATUIN_HOST: "0.0.0.0"
       ATUIN_OPEN_REGISTRATION: "$ATUIN_APP_REG"
-      ATUIN_DB_URI: postgres://$ATUIN_DB_USERNAME:$ATUIN_DB_PASSWORD@atuin_postgresql/$ATUIN_DB_NAME
+      ATUIN_DB_URI: postgres://$ATUIN_DB_USERNAME:$ATUIN_DB_PASSWORD@db/$ATUIN_DB_NAME
       ATUIN_PATH: "$ATUIN_APP_PATH"
       RUST_LOG: info,atuin_server=debug
     labels:
