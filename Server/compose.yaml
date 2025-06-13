@@ -69,7 +69,7 @@ services:
       - "traefik.http.services.atuin.loadbalancer.server.scheme=http"
       - "traefik.http.services.atuin.loadbalancer.server.port=8888"
       - "traefik.docker.network=proxy"
-  postgresql:
+  atuin_postgresql:
     container_name: atuin_postgresql
     image: postgres:latest
     restart: unless-stopped
