@@ -45,18 +45,19 @@ services:
     restart: unless-stopped
     image: ghcr.io/atuinsh/atuin:latest
     command: server start
+    depends_on:
+      atuin_postgresql:
+        condition: service_healthy
     networks:
       - proxy
     volumes:
       - type: bind
         source: /opt/homelab/Docker-data/Server/Atuin/config
         target: /config
-    links:
-      - postgresql:db
     environment:
       ATUIN_HOST: "0.0.0.0"
       ATUIN_OPEN_REGISTRATION: "$ATUIN_APP_REG"
-      ATUIN_DB_URI: postgres://$ATUIN_DB_USERNAME:$ATUIN_DB_PASSWORD@db/$ATUIN_DB_NAME
+      ATUIN_DB_URI: postgres://$ATUIN_DB_USERNAME:$ATUIN_DB_PASSWORD@atuin_postgresql/$ATUIN_DB_NAME
       ATUIN_PATH: "$ATUIN_APP_PATH"
       RUST_LOG: info,atuin_server=debug
     labels:
@@ -69,7 +70,7 @@ services:
       - "traefik.http.services.atuin.loadbalancer.server.port=8888"
       - "traefik.docker.network=proxy"
   postgresql:
-    container_name: atuin-postgresql
+    container_name: atuin_postgresql
     image: postgres:latest
     restart: unless-stopped
     networks:
