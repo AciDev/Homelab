@@ -71,6 +71,7 @@ services:
       - "traefik.docker.network=proxy"
   atuin_postgresql:
     container_name: atuin_postgresql
+    hostname: atuin_postgesql
     image: postgres:latest
     restart: unless-stopped
     networks:
