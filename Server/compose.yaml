@@ -41,10 +41,10 @@ services:
         target: /etc/ntfy
     restart: unless-stopped
   atuin:
+    container_name: atuin
     restart: unless-stopped
     image: ghcr.io/atuinsh/atuin:latest
-    command:
-      - server start
+    command: server start
     networks:
       - proxy
     volumes:
@@ -69,6 +69,7 @@ services:
       - "traefik.http.services.atuin.loadbalancer.server.port=8888"
       - "traefik.docker.network=proxy"
   postgresql:
+    container_name: atuin-postgresql
     image: postgres:latest
     restart: unless-stopped
     networks:
