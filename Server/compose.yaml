@@ -28,7 +28,7 @@ services:
       - "traefik.http.routers.ntfy-secure.rule=Host(`ntfy.${SERVER_DOMAIN}`)"
       - "traefik.http.routers.ntfy-secure.tls=true"
       - "traefik.http.routers.ntfy-secure.service=ntfy"
-      - "traefik.http.services.ntfy.loadbalancer.server.scheme=http" 
+      - "traefik.http.services.ntfy.loadbalancer.server.scheme=http"
       - "traefik.http.services.ntfy.loadbalancer.server.port=80"
       - "traefik.docker.network=proxy"
     user: 1000:1000
@@ -40,6 +40,47 @@ services:
         source: /opt/homelab/Docker-data/Server/Ntfy/data
         target: /etc/ntfy
     restart: unless-stopped
+  atuin:
+    restart: unless-stopped
+    image: ghcr.io/atuinsh/atuin:latest
+    command:
+      - server start
+    networks:
+      - proxy
+    volumes:
+      - type: bind
+        source: /opt/homelab/Docker-data/Server/Atuin/config
+        target: /config
+    links:
+      - postgresql:db
+    environment:
+      ATUIN_HOST: "0.0.0.0"
+      ATUIN_OPEN_REGISTRATION: "$ATUIN_APP_REG"
+      ATUIN_DB_URI: postgres://$ATUIN_DB_USERNAME:$ATUIN_DB_PASSWORD@db/$ATUIN_DB_NAME
+      ATUIN_PATH: "$ATUIN_APP_PATH"
+      RUST_LOG: info,atuin_server=debug
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.atuin-secure.entrypoints=https"
+      - "traefik.http.routers.atuin-secure.rule=Host(`atuin.${SERVER_DOMAIN}`)"
+      - "traefik.http.routers.atuin-secure.tls=true"
+      - "traefik.http.routers.atuin-secure.service=atuin"
+      - "traefik.http.services.atuin.loadbalancer.server.scheme=http"
+      - "traefik.http.services.atuin.loadbalancer.server.port=8888"
+      - "traefik.docker.network=proxy"
+  postgresql:
+    image: postgres:latest
+    restart: unless-stopped
+    networks:
+      - proxy
+    volumes:
+      - type: bind
+        source: /opt/homelab/Docker-data/Server/Atuin/database
+        target: /var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${ATUIN_DB_USERNAME}
+      POSTGRES_PASSWORD: ${ATUIN_DB_PASSWORD}
+      POSTGRES_DB: ${ATUIN_DB_NAME}
 
 networks:
   proxy:
